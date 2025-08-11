@@ -25,3 +25,4 @@ htmlcov/
 # SO
 .DS_Store
 Thumbs.db
+.env

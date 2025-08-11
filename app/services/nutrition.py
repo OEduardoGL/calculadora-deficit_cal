@@ -52,15 +52,17 @@ def _macros_para_calorias(calorias: int, prot_g: float, gord_g: float) -> MacroD
         carboidratos_g=round(carb_g, 1),
     )
 
+# app/services/nutrition.py
+
 def calcular_nutricao(data: UserInput):
     tmb = _tmb_mifflin(data.sexo.value, data.peso, data.altura, data.idade)
     gcd = tmb * FACTORS[data.fator_atividade]
     meta_cal, faixa = _target_calories(gcd, data.objetivo)
     prot_g, gord_g = _macro_defaults(data.objetivo, data.peso)
 
-    macros_meta = _macros_para_calorias(meta_cal, prot_g, gord_g)
-    macros_min = _macros_para_calorias(faixa[0], prot_g, gord_g)
-    macros_max = _macros_para_calorias(faixa[1], prot_g, gord_g)
+    macros_meta = _macros_para_calorias(meta_cal, prot_g, gord_g).model_dump()
+    macros_min = _macros_para_calorias(faixa[0], prot_g, gord_g).model_dump()
+    macros_max = _macros_para_calorias(faixa[1], prot_g, gord_g).model_dump()
 
     return {
         "tmb": int(round(tmb)),
@@ -71,3 +73,4 @@ def calcular_nutricao(data: UserInput):
         "macros_min": macros_min,
         "macros_max": macros_max,
     }
+
