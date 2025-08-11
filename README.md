@@ -40,19 +40,19 @@ python -m venv .venv
 source .venv/bin/activate   # Linux/Mac
 # ou
 .venv\Scripts\activate      # Windows
-
+```
 ### Instalar dependências
 ```bash
 pip install -r requirements.txt
-
+```
 ### Configurar variáveis de ambiente
 ```bash
 Crie um arquivo .env na raiz do projeto com base no .env.example
-
+```
 ### Rodar a API
 ```bash
 uvicorn app.main:app --reload
-
+```
 ## 📡 Endpoints Principais
 
 ### 🔑 Autenticação
@@ -76,3 +76,4 @@ Após iniciar o servidor, acesse:
 Para rodar os testes automatizados:
 ```bash
 pytest
+```
