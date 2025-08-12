@@ -15,7 +15,6 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
   - 🔺 **Superávit** (bulking limpo)
 - Autenticação segura e controle de acesso por usuário
 - Persistência e listagem de **histórico de cálculos**
-- Documentação interativa pronta para integrar com um front-end (React, por ex.)
 
 ## 🛠 Tecnologias e Ferramentas
 
