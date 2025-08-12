@@ -1,14 +1,16 @@
-# Ambiente virtual
-.venv/
-venv/
+# Ambientes
+.env
+.env.app
+.env.*
+!.env.example
+!.env.docker.example
 
-# Cache do Python
+# Python
+.venv/
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-
-# Testes e coverage
 .pytest_cache/
 .coverage
 htmlcov/
@@ -17,12 +19,5 @@ htmlcov/
 .vscode/
 .idea/
 
-# Arquivos temporários
-*.log
-*.tmp
-*.swp
-
-# SO
-.DS_Store
-Thumbs.db
-.env
+# Docker
+db_data/

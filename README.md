@@ -1,79 +1,204 @@
 # 🥗 Calculadora de Dieta — API FastAPI
 
 ## 📌 Descrição
-Esta aplicação é uma **API REST** desenvolvida com **FastAPI** que calcula a **necessidade calórica e distribuição de macronutrientes** com base em dados fornecidos pelo usuário, considerando seu objetivo (perder gordura, manter massa muscular ou bulking limpo).  
-O sistema também implementa **autenticação com JWT**, salvamento de cálculos por usuário e histórico consultável, permitindo que o usuário acompanhe sua evolução.
 
----
+API REST em **FastAPI** que calcula **necessidade calórica** (TMB/TDEE) e **macronutrientes** a partir de dados do usuário, considerando o objetivo (déficit, manutenção com ganho, ou bulking limpo).
 
-## 🎯 Objetivos da Aplicação
-- Calcular **TDEE** (Total Daily Energy Expenditure) e macronutrientes personalizados.
-- Adaptar cálculos de acordo com o **objetivo do usuário**:
-  - 🔻 Déficit calórico (perda de gordura)
-  - ⚖️ Manutenção com ganho muscular
-  - 🔺 Superávit calórico (bulking limpo)
-- Permitir **cadastro e login seguro**.
-- Salvar os cálculos no **histórico do usuário**.
-- Retornar dados via **endpoints REST** prontos para integração com front-end.
+A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe **histórico**. Está **dockerizada** com **PostgreSQL** e **pgAdmin**, e pode ser executada tanto localmente (uvicorn) quanto via Docker/Compose.
 
----
+## 🎯 Objetivos
+
+- Calcular TMB (Mifflin-St Jeor) e TDEE por nível de atividade
+- Ajustar calorias/macros por objetivo:
+  - 🔻 **Déficit** (perder gordura com alta proteína)
+  - ⚖️ **Manutenção** com ganho de massa
+  - 🔺 **Superávit** (bulking limpo)
+- Autenticação segura e controle de acesso por usuário
+- Persistência e listagem de **histórico de cálculos**
+- Documentação interativa pronta para integrar com um front-end (React, por ex.)
 
 ## 🛠 Tecnologias e Ferramentas
-| Ferramenta / Biblioteca | Uso no Projeto |
-|------------------------|----------------|
-| **FastAPI** | Framework principal para criação da API. |
-| **Uvicorn** | Servidor ASGI para rodar a aplicação FastAPI. |
-| **Pydantic** | Validação de dados e tipagem forte para as requisições e respostas. |
-| **Pydantic Settings** | Gerenciamento de variáveis de ambiente e configurações. |
-| **SQLite** | Banco de dados relacional simples para armazenamento local. |
-| **SQLAlchemy** | ORM para modelagem e persistência dos dados no banco. |
-| **JWT (JSON Web Token)** | Autenticação e controle de acesso seguro. |
-| **Passlib** | Criptografia de senhas dos usuários. |
-| **Pytest** | Testes automatizados para endpoints e regras de negócio. |
 
----
+| Ferramenta | Para que serve |
+|---|---|
+| **FastAPI** | Framework da API (tipagem, validação, docs automáticas) |
+| **Uvicorn** | Servidor ASGI |
+| **Pydantic + Settings** | Validação de dados e gerenciamento de variáveis de ambiente |
+| **SQLAlchemy (2.x)** | ORM e acesso ao banco |
+| **PostgreSQL** | Banco de dados relacional (em Docker) |
+| **JWT (python-jose)** | Autenticação baseada em tokens |
+| **Passlib[bcrypt]** | Hash de senhas |
+| **Pytest** | Testes automatizados |
+| **Docker / Docker Compose** | Empacotar e orquestrar API + DB + pgAdmin |
+| **pgAdmin** | GUI web para o PostgreSQL |
+| **Makefile** | Atalhos para subir/descer serviços rapidamente |
 
-## 🚀 Como Rodar o Projeto Localmente
-### Criar e ativar ambiente virtual
-```bash
-python -m venv .venv
-source .venv/bin/activate   # Linux/Mac
-# ou
-.venv\Scripts\activate      # Windows
+## 📁 Estrutura do Projeto
+
 ```
-### Instalar dependências
-```bash
-pip install -r requirements.txt
+├── app/                     # código da API
+│   ├── api/v1/endpoints/    # rotas (auth, nutrition)
+│   ├── core/                # config, segurança, startup
+│   ├── db/                  # models, session, base
+│   ├── repositories/        # acesso ao banco
+│   └── schemas/             # Pydantic (requests/responses)
+├── tests/                   # testes (pytest)
+├── Dockerfile
+├── docker-compose.yml
+├── Makefile
+├── requirements.txt
+├── .env                     # (para Docker/Compose) -> gerar a partir de .env.docker.example
+├── .env.app                 # (para rodar local) -> gerar a partir de .env.example
+├── .env.docker.example      # exemplo para Docker/Compose
+└── .env.example             # exemplo para rodar local (uvicorn)
 ```
-### Configurar variáveis de ambiente
-```bash
-Crie um arquivo .env na raiz do projeto com base no .env.example
-```
-### Rodar a API
-```bash
-uvicorn app.main:app --reload
-```
+
+> **⚠️ Importante sobre `.env`**
+> 
+> - Para **rodar local (uvicorn)**, use **`.env.app`** (criado a partir de `.env.example`)
+> - Para **rodar com Docker/Compose**, use **`.env`** (criado a partir de `.env.docker.example`)
+> - Os arquivos `*.example` **podem** ser versionados; os `.env` reais **não**
+
+## 🚀 Como Rodar
+
+### 🧩 Opção 1: Local (uvicorn)
+
+1. **Crie e ative o ambiente virtual:**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # Linux/Mac
+   # .venv\Scripts\activate   # Windows
+   ```
+
+2. **Instale as dependências:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configure as variáveis de ambiente:**
+   - Crie `.env.app` a partir de `.env.example`
+   - Gere uma `SECRET_KEY` forte:
+     ```bash
+     python -c "import secrets; print(secrets.token_urlsafe(64))"
+     ```
+
+4. **Execute a API:**
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+**Acesse:** http://127.0.0.1:8000
+
+> **💡 Dica:** Para usar **PostgreSQL** local, garanta que há um servidor rodando e que `DATABASE_URL` aponta corretamente.  
+> Para testes rápidos com **SQLite**, defina:
+> ```env
+> DATABASE_URL=sqlite:///./app.db
+> ```
+
+### 🐳 Opção 2: Docker/Compose (API + Postgres + pgAdmin)
+
+1. **Crie `.env` a partir de `.env.docker.example`:**
+   ```env
+   # .env (exemplo para Compose)
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=postgres
+   POSTGRES_DB=calcalc
+   DB_PORT=5432               # use 5433 se 5432 já estiver em uso no host
+   
+   SECRET_KEY=coloque-uma-chave-forte
+   ACCESS_TOKEN_EXPIRE_MINUTES=60
+   BACKEND_CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+   
+   PGADMIN_DEFAULT_EMAIL=admin@local
+   PGADMIN_DEFAULT_PASSWORD=admin
+   ```
+
+2. **Gere a `SECRET_KEY` como mostrado acima**
+
+3. **Suba todos os serviços:**
+   ```bash
+   make up
+   # ou: docker-compose up --build -d
+   ```
+
+### 📡 URLs de Acesso
+
+- **API:** http://127.0.0.1:8000
+- **Documentação:** http://127.0.0.1:8000/docs
+- **pgAdmin:** http://127.0.0.1:5050
+  - **Login:** `admin@local` / `admin`
+  - **Para conectar ao banco:** Host: `db`, Port: `5432`, User/Pass conforme `.env`
+
+### 🔧 Comandos Úteis
+
+- **Ver logs da API:** `make logs`
+- **Parar serviços:** `make down`
+
 ## 📡 Endpoints Principais
 
 ### 🔑 Autenticação
-- **POST** `/api/v1/auth/signup` → Criar nova conta.  
-- **POST** `/api/v1/auth/login` → Obter token JWT.
 
-### 🥗 Cálculos
-- **POST** `/api/v1/nutrition/save` → Salvar cálculo no histórico (**autenticado**).  
-- **GET** `/api/v1/nutrition/history` → Consultar histórico do usuário (**autenticado**).
+- `POST /api/v1/auth/signup` — Criar usuário
+- `POST /api/v1/auth/login` — Fazer login (retorna `access_token`)
 
----
+### 🥗 Cálculos Nutricionais
+
+- `POST /api/v1/nutrition/calculate` — Cálculo público (sem salvar)
+- `POST /api/v1/nutrition/save` — Salvar cálculo (requer autenticação)
+- `GET /api/v1/nutrition/history?skip=0&limit=10` — Histórico (requer autenticação)
 
 ## 📄 Documentação Interativa
-Após iniciar o servidor, acesse:
-- **Swagger UI** → [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)  
-- **Redoc** → [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
----
+- **Swagger UI:** http://127.0.0.1:8000/docs
+- **Redoc:** http://127.0.0.1:8000/redoc
 
-## 🧪 Testes
-Para rodar os testes automatizados:
+## 🧪 Testes Rápidos (curl)
+
+### Criar usuário
 ```bash
-pytest
+curl -X POST http://127.0.0.1:8000/api/v1/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"dev@ex.com","password":"segredo123"}'
+```
+
+### Fazer login
+```bash
+TOKEN=$(curl -s -X POST http://127.0.0.1:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"dev@ex.com","password":"segredo123"}' | jq -r .access_token)
+```
+
+### Calcular (endpoint público)
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/nutrition/calculate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sexo":"M",
+    "peso":80,
+    "altura":180,
+    "idade":28,
+    "fator_atividade":"moderadamente_ativo",
+    "objetivo":"perder_gordura"
+  }'
+```
+
+### Salvar no histórico (requer autenticação)
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/nutrition/save \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sexo":"M",
+    "peso":80,
+    "altura":180,
+    "idade":28,
+    "fator_atividade":"moderadamente_ativo",
+    "objetivo":"perder_gordura"
+  }'
+```
+
+### Listar histórico (requer autenticação)
+```bash
+curl -X GET "http://127.0.0.1:8000/api/v1/nutrition/history?skip=0&limit=10" \
+  -H "Authorization: Bearer $TOKEN"
 ```
