@@ -33,7 +33,10 @@ services:
       BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
     ports:
       - "8000:8000"
-
+    working_dir: /app
+    volumes:
+      - ./:/app
+      
   pgadmin:
     image: dpage/pgadmin4:8
     container_name: calcalc-pgadmin

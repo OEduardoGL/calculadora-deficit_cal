@@ -6,7 +6,9 @@ ifeq ($(DC),COMPOSE_NOT_FOUND)
 $(error Docker Compose não encontrado. Instale o plugin 'docker compose' ou o binário 'docker-compose'.)
 endif
 
-.PHONY: up down logs api bash db
+.PHONY: up down logs api bash db \
+        migrate revision current history downgrade \
+        ps rebuild restart
 
 up:
 	$(DC) up --build -d
@@ -25,3 +27,28 @@ db:
 
 api:
 	curl -s http://127.0.0.1:8000/ | jq
+
+ps:
+	$(DC) ps
+
+rebuild:
+	$(DC) build api
+
+restart:
+	$(DC) restart api
+
+migrate:
+	$(DC) exec api bash -lc 'PYTHONPATH=. alembic upgrade head'
+
+revision:
+	@if [ -z "$(msg)" ]; then echo "Use: make revision msg=\"sua mensagem\""; exit 1; fi
+	$(DC) exec api bash -lc 'PYTHONPATH=. alembic revision -m "$(msg)" --autogenerate'
+
+current:
+	$(DC) exec api bash -lc 'PYTHONPATH=. alembic current'
+
+history:
+	$(DC) exec api bash -lc 'PYTHONPATH=. alembic history'
+downgrade:
+	@if [ -z "$(rev)" ]; then echo "Use: make downgrade rev=-1  (ou rev=<rev_id>/base/head)"; exit 1; fi
+	$(DC) exec api bash -lc 'PYTHONPATH=. alembic downgrade $(rev)'
