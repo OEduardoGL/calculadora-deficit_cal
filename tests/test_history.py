@@ -52,16 +52,13 @@ async def test_save_and_history_flow(client: AsyncClient):
 
     item = data[0]
 
-    # shape básico
     assert "id" in item
     assert "input" in item and isinstance(item["input"], dict)
     assert item["input"].get("objetivo") == payload["objetivo"]
 
-    # tenta encontrar “calorias alvo” em QUALQUER nível
     keys = {"gcd", "tdee", "calorias", "tmb"}
     gcd_value = find_numeric_value(item, keys)
 
-    # fallback: média de faixa_calorias se existir
     if gcd_value is None and isinstance(item.get("faixa_calorias"), list) and len(item["faixa_calorias"]) == 2:
         low, high = item["faixa_calorias"]
         if isinstance(low, (int, float)) and isinstance(high, (int, float)):
