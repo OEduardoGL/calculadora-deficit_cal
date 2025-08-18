@@ -1,5 +1,5 @@
 import pytest
-from httpx import AsyncClient
+import httpx
 from fastapi import status
 from app.main import app
 
@@ -13,7 +13,8 @@ async def test_calculate_basic():
         "fator_atividade": "moderadamente_ativo",
         "objetivo": "perder_gordura"
     }
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:
         res = await ac.post("/api/v1/nutrition/calculate", json=payload)
     assert res.status_code == status.HTTP_200_OK
     data = res.json()

@@ -52,3 +52,14 @@ history:
 downgrade:
 	@if [ -z "$(rev)" ]; then echo "Use: make downgrade rev=-1  (ou rev=<rev_id>/base/head)"; exit 1; fi
 	$(DC) exec api bash -lc 'PYTHONPATH=. alembic downgrade $(rev)'
+
+.PHONY: test test-verbose cov
+
+test:
+	PYTHONPATH=. pytest -q
+
+test-verbose:
+	pytest -vv
+
+cov:
+	pytest --maxfail=1 --disable-warnings -q --cov=app --cov-report=term-missing
