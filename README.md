@@ -28,6 +28,7 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
 | **JWT (python-jose)** | Autenticação baseada em tokens |
 | **Passlib[bcrypt]** | Hash de senhas |
 | **Pytest** | Testes automatizados |
+| **Alembic** | Migrations para versionamento e controle do schema do banco |
 | **Docker / Docker Compose** | Empacotar e orquestrar API + DB + pgAdmin |
 | **pgAdmin** | GUI web para o PostgreSQL |
 | **Makefile** | Atalhos para subir/descer serviços rapidamente |
@@ -42,6 +43,8 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
 │   ├── repositories/        # acesso ao banco
 │   └── schemas/             # Pydantic (requests/responses)
 ├── tests/                   # testes (pytest)
+├── alembic/                 # migrations do banco (controladas pelo Alembic)
+├── alembic.ini              # config do Alembic
 ├── Dockerfile
 ├── docker-compose.yml
 ├── Makefile
@@ -132,6 +135,34 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
 
 - **Ver logs da API:** `make logs`
 - **Parar serviços:** `make down`
+
+## 🧪 Testes
+
+Os testes de integração foram implementados com **pytest**, cobrindo:
+- Registro e login de usuários
+- Fluxo completo de salvar cálculos e consultar histórico
+
+### Rodar todos os testes
+```bash
+make test
+# ou
+pytest -q
+```
+
+### 📜 Migrations (Alembic)
+
+Para aplicar as migrations (criar/atualizar tabelas no banco):
+
+```bash
+# Gerar uma nova migration automaticamente
+alembic revision --autogenerate -m "mensagem da mudança"
+
+# Aplicar migrations
+alembic upgrade head
+
+# Reverter última migration
+alembic downgrade -1
+```
 
 ## 📡 Endpoints Principais
 
