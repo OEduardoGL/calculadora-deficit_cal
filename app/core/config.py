@@ -1,7 +1,8 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import field_validator
-from typing import List, Union
 import json
+
+from pydantic import field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "CalCalc API"
@@ -10,12 +11,15 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
-    BACKEND_CORS_ORIGINS: Union[List[str], str, dict] = ["http://localhost:5173", "http://localhost:3000"]
+    BACKEND_CORS_ORIGINS: list[str] | str | dict = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+    ]
 
     model_config = SettingsConfigDict(
         env_file=".env.app",
         env_file_encoding="utf-8",
-        env_nested_delimiter="__",  
+        env_nested_delimiter="__",
     )
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
@@ -32,7 +36,9 @@ class Settings(BaseSettings):
 
         if isinstance(v, str):
             s = v.strip()
-            if (s.startswith("'") and s.endswith("'")) or (s.startswith('"') and s.endswith('"')):
+            if (s.startswith("'") and s.endswith("'")) or (
+                s.startswith('"') and s.endswith('"')
+            ):
                 s = s[1:-1].strip()
             if s.startswith("["):
                 try:
@@ -42,5 +48,6 @@ class Settings(BaseSettings):
             return [item.strip() for item in s.split(",") if item.strip()]
         # fallback
         return v
+
 
 settings = Settings()
