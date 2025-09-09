@@ -1,8 +1,6 @@
-from . import __name__ as _pkg  # noqa:F401 (apenas para namespace)
-from typing import Dict, Tuple
-from app.schemas.nutrition import UserInput, MacroDistribuicao, Objetivo, FatorAtividade
+from app.schemas.nutrition import FatorAtividade, MacroDistribuicao, Objetivo, UserInput
 
-FACTORS: Dict[FatorAtividade, float] = {
+FACTORS: dict[FatorAtividade, float] = {
     FatorAtividade.sedentario: 1.2,
     FatorAtividade.levemente_ativo: 1.375,
     FatorAtividade.moderadamente_ativo: 1.55,
@@ -10,12 +8,14 @@ FACTORS: Dict[FatorAtividade, float] = {
     FatorAtividade.extremamente_ativo: 1.9,
 }
 
+
 def _tmb_mifflin(sexo: str, peso: float, altura_cm: float, idade: int) -> float:
     if sexo == "M":
         return 10 * peso + 6.25 * altura_cm - 5 * idade + 5
     return 10 * peso + 6.25 * altura_cm - 5 * idade - 161
 
-def _target_calories(gcd: float, objetivo: Objetivo) -> Tuple[int, Tuple[int, int]]:
+
+def _target_calories(gcd: float, objetivo: Objetivo) -> tuple[int, tuple[int, int]]:
     if objetivo == Objetivo.perder_gordura:
         meta = gcd - 500
         faixa = (int(gcd - 700), int(gcd - 300))
@@ -27,7 +27,8 @@ def _target_calories(gcd: float, objetivo: Objetivo) -> Tuple[int, Tuple[int, in
         faixa = (int(gcd - 100), int(gcd + 100))
     return int(meta), faixa
 
-def _macro_defaults(objetivo: Objetivo, peso: float) -> Tuple[float, float]:
+
+def _macro_defaults(objetivo: Objetivo, peso: float) -> tuple[float, float]:
     """
     Retorna (proteina_g, gordura_g) como defaults por kg.
     - cutting: prot 2.0 g/kg, gord 0.8 g/kg
@@ -40,7 +41,10 @@ def _macro_defaults(objetivo: Objetivo, peso: float) -> Tuple[float, float]:
         return 1.6 * peso, 1.0 * peso
     return 1.8 * peso, 0.9 * peso
 
-def _macros_para_calorias(calorias: int, prot_g: float, gord_g: float) -> MacroDistribuicao:
+
+def _macros_para_calorias(
+    calorias: int, prot_g: float, gord_g: float
+) -> MacroDistribuicao:
     prot_kcal = prot_g * 4
     gord_kcal = gord_g * 9
     carb_kcal = max(calorias - (prot_kcal + gord_kcal), 0)
@@ -52,7 +56,9 @@ def _macros_para_calorias(calorias: int, prot_g: float, gord_g: float) -> MacroD
         carboidratos_g=round(carb_g, 1),
     )
 
+
 # app/services/nutrition.py
+
 
 def calcular_nutricao(data: UserInput):
     tmb = _tmb_mifflin(data.sexo.value, data.peso, data.altura, data.idade)
@@ -73,4 +79,3 @@ def calcular_nutricao(data: UserInput):
         "macros_min": macros_min,
         "macros_max": macros_max,
     }
-

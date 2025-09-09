@@ -8,7 +8,8 @@ endif
 
 .PHONY: up down logs api bash db \
         migrate revision current history downgrade \
-        ps rebuild restart
+        ps rebuild restart \
+        lint format format-check pre-commit-install pre-commit-run
 
 up:
 	$(DC) up --build -d
@@ -63,3 +64,23 @@ test-verbose:
 
 cov:
 	pytest --maxfail=1 --disable-warnings -q --cov=app --cov-report=term-missing
+
+# --- Quality ---
+
+lint:
+	ruff check .
+	black --check .
+
+format:
+	ruff check --fix .
+	black .
+
+format-check:
+	ruff check .
+	black --check .
+
+pre-commit-install:
+	pre-commit install
+
+pre-commit-run:
+	pre-commit run --all-files

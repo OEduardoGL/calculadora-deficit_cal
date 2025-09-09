@@ -1,14 +1,19 @@
-import pytest
-from httpx import AsyncClient
-from fastapi import status
-from app.main import app
 from uuid import uuid4
+
+import pytest
+from fastapi import status
+from httpx import AsyncClient
+
 
 def find_numeric_value(obj, keys_lower):
     """Busca recursiva em dict/list por qualquer chave em keys_lower com valor numérico."""
     if isinstance(obj, dict):
         for k, v in obj.items():
-            if isinstance(k, str) and k.lower() in keys_lower and isinstance(v, (int, float)):
+            if (
+                isinstance(k, str)
+                and k.lower() in keys_lower
+                and isinstance(v, int | float)
+            ):
                 return v
             found = find_numeric_value(v, keys_lower)
             if found is not None:
@@ -20,14 +25,19 @@ def find_numeric_value(obj, keys_lower):
                 return found
     return None
 
+
 @pytest.mark.asyncio
 async def test_save_and_history_flow(client: AsyncClient):
     # cria usuário e login (email único por execução)
     email = f"h{uuid4().hex[:6]}@example.com"
     password = "123456"
 
-    await client.post("/api/v1/auth/register", json={"email": email, "password": password})
-    r = await client.post("/api/v1/auth/login", json={"email": email, "password": password})
+    await client.post(
+        "/api/v1/auth/register", json={"email": email, "password": password}
+    )
+    r = await client.post(
+        "/api/v1/auth/login", json={"email": email, "password": password}
+    )
     assert r.status_code == status.HTTP_200_OK
     token = r.json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
@@ -59,9 +69,15 @@ async def test_save_and_history_flow(client: AsyncClient):
     keys = {"gcd", "tdee", "calorias", "tmb"}
     gcd_value = find_numeric_value(item, keys)
 
-    if gcd_value is None and isinstance(item.get("faixa_calorias"), list) and len(item["faixa_calorias"]) == 2:
+    if (
+        gcd_value is None
+        and isinstance(item.get("faixa_calorias"), list)
+        and len(item["faixa_calorias"]) == 2
+    ):
         low, high = item["faixa_calorias"]
-        if isinstance(low, (int, float)) and isinstance(high, (int, float)):
+        if isinstance(low, int | float) and isinstance(high, int | float):
             gcd_value = (low + high) / 2
 
-    assert isinstance(gcd_value, (int, float)) and gcd_value > 0, f"Não encontrei {keys} ou faixa_calorias numéricas em: {item}"
+    assert (
+        isinstance(gcd_value, int | float) and gcd_value > 0
+    ), f"Não encontrei {keys} ou faixa_calorias numéricas em: {item}"

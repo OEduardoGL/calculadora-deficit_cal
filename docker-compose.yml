@@ -36,7 +36,7 @@ services:
     working_dir: /app
     volumes:
       - ./:/app
-      
+
   pgadmin:
     image: dpage/pgadmin4:8
     container_name: calcalc-pgadmin

@@ -56,7 +56,7 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
 ```
 
 > **⚠️ Importante sobre `.env`**
-> 
+>
 > - Para **rodar local (uvicorn)**, use **`.env.app`** (criado a partir de `.env.example`)
 > - Para **rodar com Docker/Compose**, use **`.env`** (criado a partir de `.env.docker.example`)
 > - Os arquivos `*.example` **podem** ser versionados; os `.env` reais **não**
@@ -91,7 +91,7 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
 
 **Acesse:** http://127.0.0.1:8000
 
-> **💡 Dica:** Para usar **PostgreSQL** local, garanta que há um servidor rodando e que `DATABASE_URL` aponta corretamente.  
+> **💡 Dica:** Para usar **PostgreSQL** local, garanta que há um servidor rodando e que `DATABASE_URL` aponta corretamente.
 > Para testes rápidos com **SQLite**, defina:
 > ```env
 > DATABASE_URL=sqlite:///./app.db
@@ -106,11 +106,11 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
    POSTGRES_PASSWORD=postgres
    POSTGRES_DB=calcalc
    DB_PORT=5432               # use 5433 se 5432 já estiver em uso no host
-   
+
    SECRET_KEY=coloque-uma-chave-forte
    ACCESS_TOKEN_EXPIRE_MINUTES=60
    BACKEND_CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-   
+
    PGADMIN_DEFAULT_EMAIL=admin@local
    PGADMIN_DEFAULT_PASSWORD=admin
    ```

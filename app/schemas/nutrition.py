@@ -1,9 +1,12 @@
-from pydantic import BaseModel, Field, field_validator
 from enum import Enum
+
+from pydantic import BaseModel, Field, field_validator
+
 
 class Sexo(str, Enum):
     M = "M"
     F = "F"
+
 
 class FatorAtividade(str, Enum):
     sedentario = "sedentario"
@@ -12,10 +15,12 @@ class FatorAtividade(str, Enum):
     muito_ativo = "muito_ativo"
     extremamente_ativo = "extremamente_ativo"
 
+
 class Objetivo(str, Enum):
     perder_gordura = "perder_gordura"
     manutencao_recomp = "manutencao_recomp"
     ganhar_massa = "ganhar_massa"
+
 
 class UserInput(BaseModel):
     sexo: Sexo
@@ -27,13 +32,16 @@ class UserInput(BaseModel):
 
     @field_validator("peso")
     @classmethod
-    def _peso(cls, v): return round(v, 2)
+    def _peso(cls, v):
+        return round(v, 2)
+
 
 class MacroDistribuicao(BaseModel):
     calorias: int
     proteinas_g: float
     gorduras_g: float
     carboidratos_g: float
+
 
 class NutritionResponse(BaseModel):
     tmb: int
