@@ -1,22 +1,22 @@
-# 🥗 Calculadora de Dieta — API FastAPI
+# Calculadora de Dieta — API FastAPI
 
-## 📌 Descrição
+## Descrição
 
 API REST em **FastAPI** que calcula **necessidade calórica** (TMB/TDEE) e **macronutrientes** a partir de dados do usuário, considerando o objetivo (déficit, manutenção com ganho, ou bulking limpo).
 
 A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe **histórico**. Está **dockerizada** com **PostgreSQL** e **pgAdmin**, e pode ser executada tanto localmente (uvicorn) quanto via Docker/Compose.
 
-## 🎯 Objetivos
+## Objetivos
 
 - Calcular TMB (Mifflin-St Jeor) e TDEE por nível de atividade
 - Ajustar calorias/macros por objetivo:
-  - 🔻 **Déficit** (perder gordura com alta proteína)
-  - ⚖️ **Manutenção** com ganho de massa
-  - 🔺 **Superávit** (bulking limpo)
+  - **Déficit** (perder gordura com alta proteína)
+  - **Manutenção** com ganho de massa
+  - **Superávit** (bulking limpo)
 - Autenticação segura e controle de acesso por usuário
 - Persistência e listagem de **histórico de cálculos**
 
-## 🛠 Tecnologias e Ferramentas
+## Tecnologias e Ferramentas
 
 | Ferramenta | Para que serve |
 |---|---|
@@ -33,7 +33,7 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
 | **pgAdmin** | GUI web para o PostgreSQL |
 | **Makefile** | Atalhos para subir/descer serviços rapidamente |
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 ├── app/                     # código da API
@@ -55,15 +55,15 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
 └── .env.example             # exemplo para rodar local (uvicorn)
 ```
 
-> **⚠️ Importante sobre `.env`**
+> **Importante sobre `.env`**
 >
 > - Para **rodar local (uvicorn)**, use **`.env.app`** (criado a partir de `.env.example`)
 > - Para **rodar com Docker/Compose**, use **`.env`** (criado a partir de `.env.docker.example`)
 > - Os arquivos `*.example` **podem** ser versionados; os `.env` reais **não**
 
-## 🚀 Como Rodar
+## Como Rodar
 
-### 🧩 Opção 1: Local (uvicorn)
+### Opção 1: Local (uvicorn)
 
 1. **Crie e ative o ambiente virtual:**
    ```bash
@@ -91,13 +91,13 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
 
 **Acesse:** http://127.0.0.1:8000
 
-> **💡 Dica:** Para usar **PostgreSQL** local, garanta que há um servidor rodando e que `DATABASE_URL` aponta corretamente.
+> **Dica:** Para usar **PostgreSQL** local, garanta que há um servidor rodando e que `DATABASE_URL` aponta corretamente.
 > Para testes rápidos com **SQLite**, defina:
 > ```env
 > DATABASE_URL=sqlite:///./app.db
 > ```
 
-### 🐳 Opção 2: Docker/Compose (API + Postgres + pgAdmin)
+### Opção 2: Docker/Compose (API + Postgres + pgAdmin)
 
 1. **Crie `.env` a partir de `.env.docker.example`:**
    ```env
@@ -123,7 +123,7 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
    # ou: docker-compose up --build -d
    ```
 
-### 📡 URLs de Acesso
+### URLs de Acesso
 
 - **API:** http://127.0.0.1:8000
 - **Documentação:** http://127.0.0.1:8000/docs
@@ -131,12 +131,12 @@ A API possui **autenticação JWT**, **salva cálculos por usuário** e expõe *
   - **Login:** `admin@local` / `admin`
   - **Para conectar ao banco:** Host: `db`, Port: `5432`, User/Pass conforme `.env`
 
-### 🔧 Comandos Úteis
+### Comandos Úteis
 
 - **Ver logs da API:** `make logs`
 - **Parar serviços:** `make down`
 
-## 🧪 Testes
+## Testes
 
 Os testes de integração foram implementados com **pytest**, cobrindo:
 - Registro e login de usuários
@@ -149,7 +149,7 @@ make test
 pytest -q
 ```
 
-### 📜 Migrations (Alembic)
+### Migrations (Alembic)
 
 Para aplicar as migrations (criar/atualizar tabelas no banco):
 
@@ -164,25 +164,25 @@ alembic upgrade head
 alembic downgrade -1
 ```
 
-## 📡 Endpoints Principais
+## Endpoints Principais
 
-### 🔑 Autenticação
+### Autenticação
 
 - `POST /api/v1/auth/signup` — Criar usuário
 - `POST /api/v1/auth/login` — Fazer login (retorna `access_token`)
 
-### 🥗 Cálculos Nutricionais
+### Cálculos Nutricionais
 
 - `POST /api/v1/nutrition/calculate` — Cálculo público (sem salvar)
 - `POST /api/v1/nutrition/save` — Salvar cálculo (requer autenticação)
 - `GET /api/v1/nutrition/history?skip=0&limit=10` — Histórico (requer autenticação)
 
-## 📄 Documentação Interativa
+## Documentação Interativa
 
 - **Swagger UI:** http://127.0.0.1:8000/docs
 - **Redoc:** http://127.0.0.1:8000/redoc
 
-## 🧪 Testes Rápidos (curl)
+## Testes Rápidos (curl)
 
 ### Criar usuário
 ```bash
